@@ -1,0 +1,200 @@
+﻿@{
+    ViewBag.Title = "Whiteboard";
+}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<style type="text/css">
+     
+      #container { border: 1px solid #000; }
+   </style>
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>Whiteboard</h1>
+                <h2>@ViewBag.Message</h2>
+            </hgroup>
+            <p>
+                To learn more about ASP.NET MVC visit
+                <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
+                The page features <mark>videos, tutorials, and samples</mark> to help you get the most from ASP.NET MVC.
+                If you have any questions about ASP.NET MVC visit
+                <a href="http://forums.asp.net/1146.aspx/1?MVC" title="ASP.NET MVC Forum">our forums</a>.
+            </p>
+        </div>
+    </section>
+}
+
+ <button id="ClearButton" type="button">Clear</button>
+<button id="PenButton" type="button">Pencil</button>
+<button id="RectButton" type="button">Rectangle</button>
+
+        <label>Drawing tool:</label><select id="dtool">
+       <option value="pencil">Pencil</option>
+       <option value="rect">Rectangle</option>
+        
+        </select>
+
+        
+<h3>The Whiteboard</h3>
+    <div id="container">
+       
+      <canvas id="MyCanvas" width="960" height="600">	  
+	  </canvas>
+    </div>
+    <script type="text/javascript" >
+
+
+        $(function () {
+            var started = false;
+            // var tool = $("#dtool").find(":selected").text();
+            var shapes = new Array();
+            var tool = "pencil";
+            // tool.toString;
+            //alert("HEy :" + tool);
+            //    $("#dtool").change(function () {
+            //        var tool = $(this).find('option:selected').val();
+            //    });
+            $("#PenButton").click(function () {
+                tool = "pencil";
+            });
+            $("#RectButton").click(function () {
+                tool = "rect";
+            });
+
+
+            if (!tool) {
+                alert('Error: failed to get the dtool element!');
+                return;
+            }
+            var canvas = document.getElementById("MyCanvas");
+            var context = canvas.getContext("2d");
+
+            $("#ClearButton").click(function () {
+                context.clearRect(0, 0, 960, 600);
+            });
+
+            $("#RectangleButton").click(function () {
+                context.strokeRect(x, y, width, height);
+            });
+
+            $("#MyCanvas").mouseover(function () {
+                $(this).css('cursor', 'crosshair');
+            });
+
+            $("#MyCanvas").mousedown(function () {
+                console.log("Inn í mousedown");
+                console.log(tool);
+                started = true;
+            })
+
+
+            $("#MyCanvas").mouseup(function () {
+                started = false;
+            });
+
+            $("#MyCanvas").mouseleave(function () {
+                started = false;
+            });
+
+            function Shape(x, y) {
+                this.x = x;
+                this.y = y;
+                // console.log("Inn í shape");
+
+
+            }
+
+
+
+            $("#MyCanvas").mousemove(function (e) {
+                var x = e.pageX - this.offsetLeft;
+                var y = (e.pageY - this.offsetTop) - 10;
+
+                // Get the mouse position relative to the canvas element.
+                if (e.layerX || e.layerX == 0) { // Firefox
+                    x = e.layerX;
+                    y = e.layerY;
+                } else if (e.offsetX || e.offsetX == 0) { // Opera
+                    x = e.offsetX;
+                    y = e.offsetY;
+                }
+
+                // The event handler works like a drawing pencil which tracks the mouse 
+                // movements. We start drawing a path made up of lines.
+
+                if (tool === "pencil") {
+                    //  console.log("Inn í if pencil");
+                    var pen = new Pencil();
+                    pen.draw(started, x, y);
+
+                }
+
+                if (tool === "rect") {
+                    if (!started) {
+                        var rect = new Rectangle();
+                        rect.draw(started, x, y);
+                    } else {
+
+                    }
+                }
+
+
+            });
+
+            function Shape(x, y) {
+                this.x = x;
+                this.y = y;
+                // console.log("Inn í shape");
+
+
+            }
+
+            function Rectangle() {
+                Shape.call(this);
+            }
+
+            Rectangle.prototype = new Shape();
+            Rectangle.prototype.constructor = Rectangle();
+
+            Rectangle.prototype.draw = function (started, x,y) {
+
+                while (!started) {
+                    context.fillStyle = "rgb(200,0,0)";
+                    context.fillRect(x, y, 55, 50);
+                }
+               
+                
+            }
+
+            function Pencil() {
+                Shape.call(this);
+            }
+
+            Pencil.prototype = new Shape();
+            Pencil.prototype.constructor = Pencil();
+
+            Pencil.prototype.draw = function (started, x, y) {
+                if (!started) {
+                    context.beginPath();
+                    context.moveTo(x, y);
+
+                } else {
+                    context.lineTo(x, y);
+                    context.stroke();
+                }
+            };
+
+
+
+
+
+
+
+
+
+
+
+        });
+        //http://ejohn.org/apps/learn/#64
+        //http://stackoverflow.com/questions/572897/how-does-javascript-prototype-work
+	</script>
