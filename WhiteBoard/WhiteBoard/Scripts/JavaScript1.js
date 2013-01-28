@@ -35,10 +35,22 @@
 		$(this).css('cursor', 'crosshair');
 	});
 
-	$("#MyCanvas").mousedown(function () {
-		console.log("Inn í mousedown");
+	var tool_x0 = 0;
+	var tool_y0 = 0;
+
+
+
+	$("#MyCanvas").mousedown(function (e) {
+	    var x = e.pageX - this.offsetLeft;
+	    var y = (e.pageY - this.offsetTop) - 10;
+	    console.log("Inn í mousedown");
 		console.log(tool);
+		tool_x0 = x;
+		tool_y0 = y;
 		started = true;
+
+		console.log("tool x" + tool_x0);
+		console.log("tool y" + tool_y0);
 	})
 
 
@@ -64,7 +76,13 @@
 		var x = e.pageX - this.offsetLeft;
 		var y = (e.pageY - this.offsetTop) - 10;
 
-		// Get the mouse position relative to the canvas element.
+		
+	//	tool_x0 = x;
+	//	tool_y0 = y;
+	
+
+
+	    // Get the mouse position relative to the canvas element.
 		if (e.layerX || e.layerX == 0) { // Firefox
 			x = e.layerX;
 			y = e.layerY;
@@ -84,20 +102,31 @@
 		}
 
 		if (tool === "rect") {
-			if (!started) {
-				var rect = new Rectangle();
-				rect.draw(started, x, y);
-			} else {
 
+		    var x1 = Math.min(x , tool_x0),
+                y1 = Math.min(y , tool_y0),
+                w = Math.abs(x - tool_x0),
+                h = Math.abs(y - tool_y0);
+
+		    context.clearRect(0, 0, canvas.width, canvas.height);
+
+		    var rect = new Rectangle(x,y);
+			if (started) {				
+				rect.draw(x1, y1, w, h);
+			} else {
+			    //rect.draw(x, y, w, h);
 			}
 		}
 
 
 	});
 
-	function Shape(x, y) {
+	function Shape(x, y, color, type, lineWidth) {
 		this.x = x;
 		this.y = y;
+		this.color = color;
+		this.type = type;
+		this.lineWidth = lineWidth;
 		// console.log("Inn í shape");
 
 
@@ -110,14 +139,15 @@
 	Rectangle.prototype = new Shape();
 	Rectangle.prototype.constructor = Rectangle();
 
-	Rectangle.prototype.draw = function (started, x, y) {
+	Rectangle.prototype.draw = function (x, y, w, h) {
+	    console.log("inn í draw rect");
+	    console.log("x :" + x);
+	    console.log("y :" + y);
+	    console.log("w :" + w);
+	    console.log("h :" + h);
+        
 
-		while (!started) {
-			context.fillStyle = "rgb(200,0,0)";
-			context.fillRect(x, y, 55, 50);
-		}
-
-
+	        context.strokeRect(x, y, w, h);
 	}
 
 	function Pencil() {
