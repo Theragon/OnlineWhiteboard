@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Online Whiteboard</title>
+		<style type="text/css"><!--
+			#container { position: relative; }
+			#myCanvas { border: 1px solid #000; }-->
+		</style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+	</head>
+	<body>
+		<p><label>Drawing tool: <select id="dtool">
+        <option value="line">Line</option>
+        <option value="rect">Rectangle</option>
+        <option value="pencil">Pencil</option>
+    </select></label></p>
+		<div id="container">
+			<canvas id="myCanvas" width="400" height="300"></canvas>
+			<canvas id="imageTemp" width="400" height="300"></canvas>
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	$(function () {
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+		$("#myCanvas").mousedown(function (e) {
+			var x = e.pageX - this.offsetLeft;
+			var y = e.pageY - this.offsetTop;
+
+		//	context.fillStyle = "blue";
+		//	context.fillRect(x, y, "100", "100");
+			context.clearRect(x, y, "90", "90");
+		//	context.strokeRect(x, y, "100", "100");
+		//	console.log("Drawing");
+			
+			context.beginPath();
+			context.arc(x,y,"10",0,Math.PI*2,true);
+			context.closePath();
+			context.fill();
+		});
+	});
+</script>
